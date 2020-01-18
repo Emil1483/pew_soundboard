@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       title: 'Pewdiepie Soundboard',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        canvasColor: Color(0xFF000000),
+        canvasColor: Color(0xFF131313),
         accentColor: Color(0xFFF9013F),
         appBarTheme: AppBarTheme(
           color: Color(0xFFF9013F),
