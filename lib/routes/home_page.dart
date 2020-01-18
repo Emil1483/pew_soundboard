@@ -7,7 +7,7 @@ import '../helpers/sound_data.dart';
 class HomePage extends StatelessWidget {
   final List<SoundData> _data = [
     SoundData(
-      name: "test1",
+      name: "big wav",
       url: "https://www.kozco.com/tech/LRMonoPhase4.wav",
     ),
     SoundData(
@@ -21,12 +21,12 @@ class HomePage extends StatelessWidget {
           "https://firebasestorage.googleapis.com/v0/b/pew-soundboard.appspot.com/o/oof.wav?alt=media&token=e6e0ad72-91e0-49a5-8f53-9256a4a5be14",
     ),
     SoundData(
-      name: "test4",
-      url: "gs://pew-soundboard.appspot.com/oof.wav",
+      name: "mp3 asset",
+      url: "assets/oof-low.mp3",
     ),
     SoundData(
-      name: "test5",
-      url: "gs://pew-soundboard.appspot.com/oof.wav",
+      name: "wav asset",
+      url: "assets/oof.wav",
     ),
     SoundData(
       name: "test6",
