@@ -42,10 +42,6 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       }
-      _data.add(_data[0]);
-      _data.add(_data[0]);
-      _data.add(_data[0]);
-      _data.add(_data[0]);
       setState(() {});
     } catch (e) {
       print(e);
