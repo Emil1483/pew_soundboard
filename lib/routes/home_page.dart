@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audio_cache.dart';
 
 import '../helpers/sound_data.dart';
 
@@ -22,11 +23,11 @@ class HomePage extends StatelessWidget {
     ),
     SoundData(
       name: "mp3 asset",
-      url: "assets/oof-low.mp3",
+      url: "oof-low.mp3",
     ),
     SoundData(
       name: "wav asset",
-      url: "assets/oof.wav",
+      url: "oof.wav",
     ),
     SoundData(
       name: "test6",
@@ -43,6 +44,7 @@ class HomePage extends StatelessWidget {
   ];
 
   final AudioPlayer _audio = new AudioPlayer();
+  final AudioCache _audioCache = new AudioCache();
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +61,15 @@ class HomePage extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: () async {
-              print("playing: ${_data[index].url}");
               await _audio.stop();
-              await _audio.play(_data[index].url);
+              print("playing: ${_data[index].url}");
+
+              final String url = _data[index].url;
+              if (url.contains("https://")) {
+                await _audio.play(url);
+              } else {
+                await _audioCache.play(url);
+              }
             },
             child: Container(
               color: Colors.orange,
