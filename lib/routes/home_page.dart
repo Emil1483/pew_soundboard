@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
         title: Text("PewDiePie SoundBoard"),
       ),
       body: StaggeredGridView.countBuilder(
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         itemCount: _data.length,
         crossAxisCount: 3,
         staggeredTileBuilder: (int index) => StaggeredTile.fit(1),

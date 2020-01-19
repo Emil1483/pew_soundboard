@@ -22,7 +22,10 @@ class MyApp extends StatelessWidget {
             color: Colors.white,
             fontSize: 22.0,
             fontWeight: FontWeight.w900,
-          )
+          ),
+          subtitle: TextStyle(
+            color: Colors.white,
+          ),
         ),
       ),
       home: HomePage(),
