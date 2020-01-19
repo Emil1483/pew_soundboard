@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import '../helpers/sound_data.dart';
+import '../ui_elements/button.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,10 +16,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Firestore _db = Firestore.instance;
+  final AudioPlayer _player = AudioPlayer();
 
   final List<SoundData> _data = [];
-
-  static final AudioPlayer _audio = AudioPlayer();
 
   @override
   void initState() {
@@ -42,6 +42,10 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       }
+      _data.add(_data[0]);
+      _data.add(_data[0]);
+      _data.add(_data[0]);
+      _data.add(_data[0]);
       setState(() {});
     } catch (e) {
       print(e);
@@ -60,24 +64,10 @@ class _HomePageState extends State<HomePage> {
         itemCount: _data.length,
         crossAxisCount: 3,
         staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-        itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-            onTap: () async {
-              await _audio.stop();
-              print("playing: ${_data[index].url}");
-
-              final String url = _data[index].url;
-
-              await _audio.play(url);
-            },
-            child: Container(
-              color: Colors.orange,
-              margin: EdgeInsets.all(2.0),
-              height: 100,
-              child: Text(_data[index].name),
-            ),
-          );
-        },
+        itemBuilder: (BuildContext context, int index) => Button(
+          soundData: _data[index],
+          audio: _player,
+        ),
       ),
     );
   }
