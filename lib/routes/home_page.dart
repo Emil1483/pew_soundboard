@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import '../helpers/sound_data.dart';
 
@@ -16,8 +19,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<SoundData> _data = [];
 
-  final AudioPlayer _audio = new AudioPlayer();
-  final AudioCache _audioCache = new AudioCache();
+  static final AudioPlayer _audio = AudioPlayer();
 
   @override
   void initState() {
@@ -30,7 +32,16 @@ class _HomePageState extends State<HomePage> {
       final ref = _db.collection("soundboard-data");
       final QuerySnapshot snap = await ref.getDocuments();
       for (DocumentSnapshot doc in snap.documents) {
-        _data.add(SoundData.fromJson(doc.data));
+        File file = await DefaultCacheManager().getSingleFile(
+          doc.data["url"],
+        );
+
+        _data.add(
+          SoundData(
+            name: doc.data["name"],
+            url: file.path,
+          ),
+        );
       }
       setState(() {});
     } catch (e) {
@@ -57,11 +68,8 @@ class _HomePageState extends State<HomePage> {
               print("playing: ${_data[index].url}");
 
               final String url = _data[index].url;
-              if (url.contains("https://")) {
-                await _audio.play(url);
-              } else {
-                await _audioCache.play(url);
-              }
+
+              await _audio.play(url);
             },
             child: Container(
               color: Colors.orange,
