@@ -19,13 +19,22 @@ class Button extends StatefulWidget {
 class _ButtonState extends State<Button> {
   bool _tapped = false;
   bool _justTapped = false;
+  Duration _currentDuration = Duration();
 
   @override
   void initState() {
     super.initState();
-    widget.audio.onAudioPositionChanged.listen((_) {
+    widget.audio.onDurationChanged.listen((Duration time) {
+      if (_currentDuration != time) {
+        _currentDuration = time;
+        if (!_justTapped) setState(() => _tapped = false);
+      }
+    });
+    widget.audio.onAudioPositionChanged.listen((Duration time) async {
       if (_justTapped) return;
-      setState(() => _tapped = false);
+      if (await widget.audio.getDuration() <= time.inMilliseconds + 500) {
+        setState(() => _tapped = false);
+      }
     });
   }
 
@@ -35,7 +44,7 @@ class _ButtonState extends State<Button> {
       onTap: () async {
         await widget.audio.stop();
         await widget.audio.play(widget.soundData.url);
-        
+
         _justTapped = true;
         setState(() => _tapped = true);
         await Future.delayed(Duration(milliseconds: 100));
