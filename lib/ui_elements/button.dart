@@ -36,7 +36,7 @@ class _ButtonState extends State<Button> {
           await Future.delayed(Duration(milliseconds: 500));
           setState(() => _tapped = false);
         }
-      } catch (e) {
+      } on Exception catch (e) {
         print(e);
       }
     });
