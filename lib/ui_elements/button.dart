@@ -31,9 +31,13 @@ class _ButtonState extends State<Button> {
       }
     });
     widget.audio.onAudioPositionChanged.listen((Duration time) async {
-      if (_justTapped) return;
-      if (await widget.audio.getDuration() <= time.inMilliseconds + 500) {
-        setState(() => _tapped = false);
+      try {
+        if (await widget.audio.getDuration() <= time.inMilliseconds + 500) {
+          await Future.delayed(Duration(milliseconds: 500));
+          setState(() => _tapped = false);
+        }
+      } catch (e) {
+        print(e);
       }
     });
   }
