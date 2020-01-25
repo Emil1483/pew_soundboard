@@ -85,6 +85,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    bool portrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       appBar: AppBar(
@@ -93,8 +94,8 @@ class _HomePageState extends State<HomePage> {
       body: StaggeredGridView.countBuilder(
         padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         itemCount: _data.length,
-        crossAxisCount: 3,
-        staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+        crossAxisCount: portrait ? 3 : 5,
+        staggeredTileBuilder: (int index) =>  StaggeredTile.fit(1),
         itemBuilder: (BuildContext context, int index) => Button(
           soundData: _data[index],
           audio: _player,
