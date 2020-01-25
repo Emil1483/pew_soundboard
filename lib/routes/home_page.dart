@@ -80,6 +80,26 @@ class _HomePageState extends State<HomePage> {
       });
     } catch (e) {
       print(e);
+
+      if (_data.length > 0) return;
+
+      final Directory dir = await getApplicationDocumentsDirectory();
+
+      setState(() {
+        dir.list(recursive: true, followLinks: false).listen(
+          (FileSystemEntity entity) {
+            if (!entity.path.endsWith(".mp3")) return;
+            final name = entity.path.split("/").last;
+            final path = entity.path;
+            _data.add(
+              SoundData(
+                name: name,
+                url: path,
+              ),
+            );
+          },
+        );
+      });
     }
   }
 
