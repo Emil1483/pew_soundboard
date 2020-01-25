@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import '../helpers/sound_data.dart';
@@ -20,32 +23,38 @@ class _ButtonState extends State<Button> {
   bool _tapped = false;
   bool _justTapped = false;
   Duration _currentDuration = Duration();
+  Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    widget.audio.onDurationChanged.listen((Duration time) {
+    widget.audio.onDurationChanged.listen((Duration time) async {
       if (_currentDuration != time) {
         _currentDuration = time;
-        if (!_justTapped) setState(() => _tapped = false);
-      }
-    });
-    widget.audio.onAudioPositionChanged.listen((Duration time) async {
-      try {
-        if (await widget.audio.getDuration() <= time.inMilliseconds + 500) {
-          await Future.delayed(Duration(milliseconds: 500));
+        if (_justTapped) {
+          if (_timer != null) _timer.cancel();
+          _timer = Timer(_currentDuration, () {
+            setState(() => _tapped = false);
+          });
+        } else {
           setState(() => _tapped = false);
         }
-      } on Exception catch (e) {
-        print(e);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (_timer != null) _timer.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
+        _currentDuration = null;
+
         await widget.audio.stop();
         await widget.audio.play(widget.soundData.url);
 

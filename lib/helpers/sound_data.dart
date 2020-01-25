@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SoundData {
-  final String url;
+  String url;
   final String name;
 
   SoundData({
