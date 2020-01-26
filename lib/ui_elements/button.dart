@@ -25,6 +25,8 @@ class _ButtonState extends State<Button> {
   Duration _currentDuration = Duration();
   Timer _timer;
 
+  //TODO: add animation
+
   @override
   void initState() {
     super.initState();
