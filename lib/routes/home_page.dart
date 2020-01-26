@@ -92,18 +92,22 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       appBar: AppBar(
-        title: Text("PewDiePie SoundBoard"),
+        title: Text("PewDiePie Soundboard"),
       ),
-      body: StaggeredGridView.countBuilder(
-        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-        itemCount: _data.length,
-        crossAxisCount: portrait ? 3 : 5,
-        staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-        itemBuilder: (BuildContext context, int index) => Button(
-          soundData: _data[index],
-          audio: _player,
-        ),
-      ),
+      body: _data.length > 0
+          ? StaggeredGridView.countBuilder(
+              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              itemCount: _data.length,
+              crossAxisCount: portrait ? 3 : 5,
+              staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+              itemBuilder: (BuildContext context, int index) => Button(
+                soundData: _data[index],
+                audio: _player,
+              ),
+            )
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }
