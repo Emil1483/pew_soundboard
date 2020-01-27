@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import '../helpers/sound_data.dart';
@@ -25,7 +24,6 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
   Duration _currentDuration = Duration();
   Timer _timer;
 
-  //TODO: add animation
   AnimationController _controller;
 
   @override
