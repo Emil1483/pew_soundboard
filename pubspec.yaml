@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -32,6 +32,7 @@ dependencies:
 
   firebase_messaging: ^6.0.9
   cloud_firestore: ^0.13.0+1
+  firebase_admob: ^0.9.0+10
 
 dev_dependencies:
   flutter_test:

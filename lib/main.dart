@@ -1,13 +1,46 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 
 import './routes/home_page.dart';
+import './advert_ids.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  BannerAd _bannerAd;
+
+  static const MobileAdTargetingInfo _targetingInfo = MobileAdTargetingInfo(
+    keywords: [
+      "pewdiepie",
+      "youtube",
+      "soundboard",
+    ],
+    childDirected: false,
+    testDevices: <String>["3C2BACC3B6177D291D421EFA6B1DBCE3"],
+  );
+
+  Future<void> _initAdBanner() async {
+    _bannerAd = BannerAd(
+      adUnitId: AdvertIds.bannerId,
+      size: AdSize.fullBanner,
+      targetingInfo: _targetingInfo,
+    );
+    await _bannerAd.load();
+    await _bannerAd.show(anchorType: AnchorType.bottom);
+  }
+
   @override
   Widget build(BuildContext context) {
+    FirebaseAdMob.instance.initialize(
+      appId: AdvertIds.appId,
+    );
+    _initAdBanner();
+
     return MaterialApp(
       title: 'Pewdiepie Soundboard',
       debugShowCheckedModeBanner: false,
@@ -28,7 +61,20 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: HomePage(),
+      home: Column(
+        children: <Widget>[
+          Expanded(
+            child: HomePage(),
+          ),
+          Builder(
+            builder: (BuildContext context) {
+              bool portrait =
+                  MediaQuery.of(context).orientation == Orientation.portrait;
+              return SizedBox(height: portrait ? 60.0 : 0);
+            },
+          ),
+        ],
+      ),
     );
   }
 }
