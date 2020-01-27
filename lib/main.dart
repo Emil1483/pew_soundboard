@@ -1,4 +1,5 @@
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import './routes/home_page.dart';
@@ -34,12 +35,19 @@ class _MyAppState extends State<MyApp> {
     await _bannerAd.show(anchorType: AnchorType.bottom);
   }
 
+  Future<void> _initNotifications() async {
+    final FirebaseMessaging fb = FirebaseMessaging();
+    fb.requestNotificationPermissions();
+  }
+
   @override
   Widget build(BuildContext context) {
     FirebaseAdMob.instance.initialize(
       appId: AdvertIds.appId,
     );
     _initAdBanner();
+
+    _initNotifications();
 
     return MaterialApp(
       title: 'Pewdiepie Soundboard',
