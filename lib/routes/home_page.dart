@@ -21,6 +21,8 @@ class _HomePageState extends State<HomePage> {
 
   final List<SoundData> _data = [];
 
+  //TODO: add ads
+
   @override
   void initState() {
     super.initState();
