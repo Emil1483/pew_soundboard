@@ -34,10 +34,7 @@ class _HomePageState extends State<HomePage> {
               ),
               itemBuilder: (BuildContext context, int index) =>
                   index < data.length
-                      ? Button(
-                          soundData: data[index],
-                          audio: appData.player,
-                        )
+                      ? Button(soundData: data[index])
                       : SizedBox(
                           height: appData.adLoaded && !portrait ? 60.0 : 0.0,
                         ),

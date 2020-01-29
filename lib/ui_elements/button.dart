@@ -2,16 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/app_data.dart';
 import '../helpers/sound_data.dart';
 
 class Button extends StatefulWidget {
   final SoundData soundData;
-  final AudioPlayer audio;
 
   const Button({
     @required this.soundData,
-    @required this.audio,
   });
 
   @override
@@ -35,19 +35,23 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
       duration: Duration(milliseconds: 400),
     );
     _forwardAnimation();
-
-    widget.audio.onDurationChanged.listen((Duration time) async {
-      if (_currentDuration != time) {
-        _currentDuration = time;
-        if (_justTapped) {
-          if (_timer != null) _timer.cancel();
-          _timer = Timer(_currentDuration, () {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AppData>(context, listen: false)
+          .player
+          .onDurationChanged
+          .listen((Duration time) async {
+        if (_currentDuration != time) {
+          _currentDuration = time;
+          if (_justTapped) {
+            if (_timer != null) _timer.cancel();
+            _timer = Timer(_currentDuration, () {
+              setState(() => _tapped = false);
+            });
+          } else {
             setState(() => _tapped = false);
-          });
-        } else {
-          setState(() => _tapped = false);
+          }
         }
-      }
+      });
     });
   }
 
@@ -76,8 +80,10 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
         onTap: () async {
           _currentDuration = null;
 
-          await widget.audio.stop();
-          await widget.audio.play(widget.soundData.url);
+          final AudioPlayer player = Provider.of<AppData>(context, listen: false).player;
+
+          await player.stop();
+          await player.play(widget.soundData.url);
 
           _justTapped = true;
           setState(() => _tapped = true);
