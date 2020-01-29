@@ -34,6 +34,8 @@ dependencies:
   cloud_firestore: ^0.13.0+1
   firebase_admob: ^0.9.0+10
 
+  provider: ^4.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -55,10 +55,12 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
   void dispose() {
     super.dispose();
     if (_timer != null) _timer.cancel();
+    _controller.dispose();
   }
 
   void _forwardAnimation() async {
     await Future.delayed(Duration(milliseconds: 200));
+    if (!mounted) return;
     _controller.forward();
   }
 
