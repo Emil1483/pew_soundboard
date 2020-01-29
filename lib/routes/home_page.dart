@@ -38,7 +38,9 @@ class _HomePageState extends State<HomePage> {
                           soundData: data[index],
                           audio: appData.player,
                         )
-                      : SizedBox(height: !portrait ? 30.0 : 0.0),
+                      : SizedBox(
+                          height: appData.adLoaded && !portrait ? 30.0 : 0.0,
+                        ),
             )
           : Center(
               child: CircularProgressIndicator(),
