@@ -53,12 +53,6 @@ class AppData with ChangeNotifier {
             url: doc.data["url"],
           ),
         );
-        _data.add(
-          SoundData(
-            name: doc.data["name"],
-            url: doc.data["url"],
-          ),
-        );
       }
       _data.sort((SoundData sound1, SoundData sound2) {
         return sound1.name.toLowerCase().compareTo(sound2.name.toLowerCase());

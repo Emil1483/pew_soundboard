@@ -30,16 +30,16 @@ class _HomePageState extends State<HomePage> {
               itemCount: data.length + 1,
               crossAxisCount: crossAxisCount,
               staggeredTileBuilder: (int index) => StaggeredTile.fit(
-                index < data.length - 1 ? 1 : crossAxisCount,
+                index < data.length ? 1 : crossAxisCount,
               ),
               itemBuilder: (BuildContext context, int index) =>
-                  index < data.length - 1
+                  index < data.length
                       ? Button(
                           soundData: data[index],
                           audio: appData.player,
                         )
                       : SizedBox(
-                          height: appData.adLoaded && !portrait ? 30.0 : 0.0,
+                          height: appData.adLoaded && !portrait ? 60.0 : 0.0,
                         ),
             )
           : Center(
