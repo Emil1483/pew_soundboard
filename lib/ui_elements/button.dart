@@ -20,7 +20,6 @@ class Button extends StatefulWidget {
 
 class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
   bool _tapped = false;
-  bool _justTapped = false;
   Duration _currentDuration = Duration();
   Timer _timer;
 
@@ -35,21 +34,22 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
       duration: Duration(milliseconds: 400),
     );
     _forwardAnimation();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AppData>(context, listen: false)
-          .player
-          .onDurationChanged
-          .listen((Duration time) async {
+      final AppData appData = Provider.of<AppData>(context, listen: false);
+
+      appData.onPlayingSound.listen((String url) {
+        if (url == widget.soundData.url) return;
+        setState(() => _tapped = false);
+      });
+
+      appData.player.onDurationChanged.listen((Duration time) {
         if (_currentDuration != time) {
           _currentDuration = time;
-          if (_justTapped) {
-            if (_timer != null) _timer.cancel();
-            _timer = Timer(_currentDuration, () {
-              setState(() => _tapped = false);
-            });
-          } else {
+          if (_timer != null) _timer.cancel();
+          _timer = Timer(_currentDuration, () {
             setState(() => _tapped = false);
-          }
+          });
         }
       });
     });
@@ -80,15 +80,16 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
         onTap: () async {
           _currentDuration = null;
 
-          final AudioPlayer player = Provider.of<AppData>(context, listen: false).player;
+          final AppData appData = Provider.of<AppData>(context, listen: false);
+
+          appData.buttonTap(widget.soundData.url);
+
+          final AudioPlayer player = appData.player;
 
           await player.stop();
           await player.play(widget.soundData.url);
 
-          _justTapped = true;
           setState(() => _tapped = true);
-          await Future.delayed(Duration(milliseconds: 100));
-          _justTapped = false;
         },
         child: Container(
           margin: EdgeInsets.all(2.0),

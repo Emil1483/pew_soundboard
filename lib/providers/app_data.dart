@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -15,6 +16,8 @@ class AppData with ChangeNotifier {
   final Firestore _db = Firestore.instance;
   final List<SoundData> _data = [];
   final AudioPlayer _player = AudioPlayer();
+  final StreamController<String> _onButtonTapped =
+      StreamController<String>.broadcast();
 
   BannerAd _bannerAd;
   bool _adLoaded = false;
@@ -22,6 +25,7 @@ class AppData with ChangeNotifier {
   bool get adLoaded => _adLoaded;
   List<SoundData> get data => List.from(_data);
   AudioPlayer get player => _player;
+  Stream<String> get onPlayingSound => _onButtonTapped.stream;
 
   AppData() {
     _getSounds();
@@ -39,6 +43,10 @@ class AppData with ChangeNotifier {
     super.dispose();
     _player.dispose();
     await _bannerAd.dispose();
+  }
+
+  void buttonTap(String url) {
+    _onButtonTapped.add(url);
   }
 
   void _getSounds() async {
