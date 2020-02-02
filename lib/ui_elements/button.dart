@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:provider/provider.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 import '../providers/app_data.dart';
 import '../helpers/sound_data.dart';
@@ -121,9 +122,10 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
               Expanded(
                 child: Align(
                   alignment: Alignment(0, -0.5),
-                  child: Text(
+                  child: AutoSizeText(
                     widget.soundData.name,
                     style: Theme.of(context).textTheme.subtitle,
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
