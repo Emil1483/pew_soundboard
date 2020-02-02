@@ -1,4 +1,4 @@
-package com.example.pew_soundboard
+package tech.djupvik.pew_soundboard
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
