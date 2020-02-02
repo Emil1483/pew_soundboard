@@ -107,11 +107,6 @@ class AppData with ChangeNotifier {
   }
 
   static const MobileAdTargetingInfo _targetingInfo = MobileAdTargetingInfo(
-    keywords: [
-      "pewdiepie",
-      "youtube",
-      "soundboard",
-    ],
     childDirected: false,
     testDevices: <String>["3C2BACC3B6177D291D421EFA6B1DBCE3"],
   );
