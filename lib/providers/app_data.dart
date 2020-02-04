@@ -49,6 +49,16 @@ class AppData with ChangeNotifier {
     _onButtonTapped.add(url);
   }
 
+  Future<String> writeFile({String url, String name, Directory dir}) async {
+    if (dir == null) dir = await getExternalStorageDirectory();
+    final File file = File('${dir.path}/$name.mp3');
+    if (!await file.exists()) {
+      http.Response response = await http.get(url);
+      await file.writeAsBytes(response.bodyBytes, flush: true);
+    }
+    return file.path;
+  }
+
   void _getSounds() async {
     try {
       final ref = _db.collection("soundboard-data");
@@ -67,14 +77,14 @@ class AppData with ChangeNotifier {
       });
       notifyListeners();
 
-      final Directory dir = await getApplicationDocumentsDirectory();
+      final Directory dir = await getExternalStorageDirectory();
+
       for (SoundData soundData in _data) {
-        final File file = File('${dir.path}/${soundData.name}.mp3');
-        if (!await file.exists()) {
-          http.Response response = await http.get(soundData.url);
-          await file.writeAsBytes(response.bodyBytes, flush: true);
-        }
-        soundData.url = file.path;
+        soundData.url = await writeFile(
+          url: soundData.url,
+          name: soundData.name,
+          dir: dir,
+        );
       }
 
       bool dataContains(String name) {

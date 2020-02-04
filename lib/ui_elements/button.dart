@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:provider/provider.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_share/flutter_share.dart';
 
 import '../providers/app_data.dart';
 import '../helpers/sound_data.dart';
@@ -69,6 +70,22 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
     _controller.forward();
   }
 
+  Future<void> _share() async {
+    String path = widget.soundData.url;
+    if (path.contains("https://")) {
+      final AppData appData = Provider.of<AppData>(context, listen: false);
+      path = await appData.writeFile(
+        name: widget.soundData.name,
+        url: path,
+      );
+    }
+
+    await FlutterShare.shareFile(
+      title: "A PewDiePie sound",
+      filePath: path,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaleTransition(
@@ -78,6 +95,10 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
       ),
       alignment: Alignment.center,
       child: GestureDetector(
+        onLongPress: () async {
+          Feedback.forLongPress(context);
+          await _share();
+        },
         onTap: () async {
           _currentDuration = null;
 
