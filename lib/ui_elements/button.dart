@@ -20,12 +20,13 @@ class Button extends StatefulWidget {
   _ButtonState createState() => _ButtonState();
 }
 
-class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
+class _ButtonState extends State<Button> with TickerProviderStateMixin {
   bool _tapped = false;
   Duration _currentDuration = Duration();
   Timer _timer;
 
   AnimationController _controller;
+  AnimationController _pressController;
 
   @override
   void initState() {
@@ -36,6 +37,11 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
       duration: Duration(milliseconds: 400),
     );
     _forwardAnimation();
+
+    _pressController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 700),
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final AppData appData = Provider.of<AppData>(context, listen: false);
@@ -95,6 +101,9 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
       ),
       alignment: Alignment.center,
       child: GestureDetector(
+        onTapDown: (_) => _pressController.forward(from: 0),
+        onTapUp: (_) => _pressController.value = 0,
+        onTapCancel: () => _pressController.value = 0,
         onLongPress: () async {
           Feedback.forLongPress(context);
           await _share();
@@ -120,24 +129,34 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
             children: <Widget>[
               Expanded(
                 flex: 3,
-                child: Container(
-                  width: 80,
-                  alignment: Alignment.center,
-                  child: Container(
-                    height: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage("assets/pew-wall.jpg"),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(4.0),
-                      child: Image.asset(
-                          _tapped ? "assets/face3.png" : "assets/face1.png"),
+                child: AnimatedBuilder(
+                  animation: _pressController,
+                  child: Padding(
+                    padding: EdgeInsets.all(4.0),
+                    child: Image.asset(
+                      _tapped ? "assets/face3.png" : "assets/face1.png",
                     ),
                   ),
+                  builder: (_, Widget child) {
+                    final double value = Curves.easeInOutCubic.transform(
+                      _pressController.value,
+                    );
+                    return Container(
+                      width: value * 20 + 80,
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: value * 20 + 80,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: AssetImage("assets/pew-wall.jpg"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: child,
+                      ),
+                    );
+                  },
                 ),
               ),
               Expanded(
