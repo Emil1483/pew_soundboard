@@ -40,7 +40,7 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
 
     _pressController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 700),
+      duration: Duration(milliseconds: 120),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -138,14 +138,15 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
                     ),
                   ),
                   builder: (_, Widget child) {
-                    final double value = Curves.easeInOutCubic.transform(
+                    final double value = Curves.decelerate.transform(
                       _pressController.value,
                     );
+                    final double size = 80 - value * 7;
                     return Container(
-                      width: value * 20 + 80,
+                      width: size,
                       alignment: Alignment.center,
                       child: Container(
-                        height: value * 20 + 80,
+                        height: size,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
