@@ -33,6 +33,7 @@ dependencies:
   firebase_messaging: ^6.0.9
   cloud_firestore: ^0.13.0+1
   firebase_admob: ^0.9.0+10
+  firebase_analytics: ^5.0.11
 
   provider: ^4.0.2
 

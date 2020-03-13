@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 import '../advert_ids.dart';
 import '../helpers/sound_data.dart';
@@ -18,6 +20,8 @@ class AppData with ChangeNotifier {
   final AudioPlayer _player = AudioPlayer();
   final StreamController<String> _onButtonTapped =
       StreamController<String>.broadcast();
+
+  final FirebaseAnalytics _analytics = FirebaseAnalytics();
 
   BannerAd _bannerAd;
   bool _adLoaded = false;
@@ -135,5 +139,27 @@ class AppData with ChangeNotifier {
     };
     await _bannerAd.load();
     await _bannerAd.show(anchorType: AnchorType.bottom);
+  }
+
+  void shareEvent(SoundData soundData) async {
+    String path = soundData.url;
+    if (path.contains("https://")) {
+      path = await writeFile(
+        name: soundData.name,
+        url: path,
+      );
+    }
+
+    bool didShare = await FlutterShare.shareFile(
+      title: "A PewDiePie sound",
+      filePath: path,
+    );
+    if (didShare) {
+      _analytics.logShare(
+        contentType: "sound",
+        itemId: soundData.name,
+        method: "unkown",
+      );
+    }
   }
 }
