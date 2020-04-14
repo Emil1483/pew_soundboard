@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
         title: 'Pewdiepie Soundboard',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          brightness: Brightness.dark,
           canvasColor: Color(0xFF131313),
           accentColor: Color(0xFFF9013F),
           appBarTheme: AppBarTheme(
@@ -28,6 +29,9 @@ class MyApp extends StatelessWidget {
             ),
             subtitle: TextStyle(
               color: Colors.white,
+            ),
+            body1: TextStyle(
+              fontSize: 22.0,
             ),
           ),
         ),

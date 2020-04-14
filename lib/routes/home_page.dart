@@ -1,9 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 
 import '../helpers/sound_data.dart';
 import '../ui_elements/button.dart';
+import '../ui_elements/submission_popup.dart';
 import '../providers/app_data.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,6 +26,19 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Theme.of(context).canvasColor,
       appBar: AppBar(
         title: Text("PewDiePie Soundboard"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add_circle),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return SubmissionPopup();
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: data.length > 0
           ? StaggeredGridView.countBuilder(

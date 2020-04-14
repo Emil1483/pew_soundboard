@@ -53,6 +53,24 @@ class AppData with ChangeNotifier {
     _onButtonTapped.add(url);
   }
 
+  Future<bool> hasInternet() async {
+    try {
+      final result = await InternetAddress.lookup("google.com");
+      if (result.isEmpty || result[0].rawAddress.isEmpty) return false;
+      return true;
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> sendSubmission(String submission) async {
+    try {
+      await _db.collection("submissions").add({"submission": submission});
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<String> writeFile({String url, String name, Directory dir}) async {
     if (dir == null) dir = await getExternalStorageDirectory();
     final File file = File('${dir.path}/$name.mp3');
