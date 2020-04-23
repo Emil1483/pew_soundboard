@@ -63,9 +63,30 @@ class AppData with ChangeNotifier {
     }
   }
 
-  Future<void> sendSubmission(String submission) async {
+  Future<void> sendSubmission(String submission, String credit) async {
     try {
-      await _db.collection("submissions").add({"submission": submission});
+      final ref = _db.collection("submissions").document(submission);
+      final snap = await ref.get();
+
+      if (snap == null || !snap.exists) {
+        await ref.setData({
+          "by": [credit],
+        });
+      } else {
+        final byData = snap.data["by"];
+        List<dynamic> by;
+        if (byData is String) {
+          by = [byData, credit];
+        } else if (byData is List<dynamic>) {
+          by = byData;
+          by.add(credit);
+        } else {
+          by = [credit];
+        }
+        final data = snap.data;
+        data["by"] = by;
+        await ref.setData(data);
+      }
     } catch (e) {
       print(e);
     }
