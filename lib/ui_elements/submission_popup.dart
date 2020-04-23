@@ -16,6 +16,7 @@ class _SubmissionPopupState extends State<SubmissionPopup>
   AnimationController _errorController;
 
   TextEditingController _textController;
+  TextEditingController _creditController;
 
   bool _loading = false;
   bool _hasText = false;
@@ -33,6 +34,7 @@ class _SubmissionPopupState extends State<SubmissionPopup>
       duration: Duration(milliseconds: 400),
     );
     _textController = TextEditingController();
+    _creditController = TextEditingController();
   }
 
   @override
@@ -40,7 +42,37 @@ class _SubmissionPopupState extends State<SubmissionPopup>
     super.dispose();
     _controller.dispose();
     _textController.dispose();
+    _creditController.dispose();
     _errorController.dispose();
+  }
+
+  Widget _credit() {
+    TextStyle smallText = Theme.of(context).textTheme.subtitle.copyWith(
+          color: Colors.grey,
+        );
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            "Want credit? Put your name here",
+            style: smallText,
+          ),
+          SizedBox(
+            width: 120.0,
+            child: TextField(
+              textInputAction: TextInputAction.done,
+              style: smallText,
+              controller: _creditController,
+              decoration: InputDecoration(
+                labelText: "Name",
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _onSend(BuildContext context) async {
@@ -55,9 +87,9 @@ class _SubmissionPopupState extends State<SubmissionPopup>
       setState(() => _noInternet = false);
       return;
     }
-    
+
     setState(() => _loading = true);
-    await appData.sendSubmission(_textController.text);
+    await appData.sendSubmission(_textController.text, _creditController.text);
     if (!mounted) return;
     setState(() => _loading = false);
     _controller.forward();
@@ -71,6 +103,9 @@ class _SubmissionPopupState extends State<SubmissionPopup>
 
   @override
   Widget build(BuildContext context) {
+    TextStyle smallText = Theme.of(context).textTheme.subtitle.copyWith(
+          color: Colors.grey,
+        );
     return AnimatedBuilder(
       animation: _controller,
       child: AlertDialog(
@@ -82,10 +117,7 @@ class _SubmissionPopupState extends State<SubmissionPopup>
             SizedBox(height: 6.0),
             Text(
               "The developer can see what you send",
-              style: Theme.of(context)
-                  .textTheme
-                  .subtitle
-                  .copyWith(color: Colors.grey),
+              style: smallText,
             ),
           ],
         ),
@@ -103,6 +135,8 @@ class _SubmissionPopupState extends State<SubmissionPopup>
                 }
               },
             ),
+            SizedBox(height: 26.0),
+            _credit(),
             SizedBox(height: 16.0),
             _loading
                 ? SizedBox(
