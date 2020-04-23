@@ -102,6 +102,8 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
         onTap: () async {
           _currentDuration = null;
 
+          // ↓↓↓
+
           final AppData appData = Provider.of<AppData>(context, listen: false);
 
           appData.buttonTap(widget.soundData.url);
@@ -110,6 +112,9 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
 
           await player.stop();
           await player.play(widget.soundData.url);
+
+          // ↑↑↑
+          // TODO: refactor this into appData.play(widget.soundData.url)
 
           setState(() => _tapped = true);
         },
