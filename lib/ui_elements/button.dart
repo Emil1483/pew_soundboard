@@ -57,7 +57,7 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
           _currentDuration = time;
           if (_timer != null) _timer.cancel();
           _timer = Timer(_currentDuration, () {
-            setState(() => _tapped = false);
+            if (mounted) setState(() => _tapped = false);
           });
         }
       });
