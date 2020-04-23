@@ -10,9 +10,11 @@ import '../helpers/sound_data.dart';
 
 class Button extends StatefulWidget {
   final SoundData soundData;
+  final Function(SoundData) onLongPress;
 
   const Button({
     @required this.soundData,
+    @required this.onLongPress,
   });
 
   @override
@@ -94,7 +96,8 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
         onTapCancel: () => _pressController.value = 0,
         onLongPress: () async {
           Feedback.forLongPress(context);
-          await _share();
+          //await _share();
+          widget.onLongPress(widget.soundData);
         },
         onTap: () async {
           _currentDuration = null;

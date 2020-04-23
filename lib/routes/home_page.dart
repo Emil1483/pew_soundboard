@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../helpers/sound_data.dart';
 import '../ui_elements/button.dart';
 import '../ui_elements/submission_popup.dart';
+import '../ui_elements/sound_details.dart';
 import '../providers/app_data.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,14 +13,118 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  static const _PANEL_HEADER_HEIGHT = 96.0;
+
+  AnimationController _panelController;
+  SoundData _currentSound;
+
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    _panelController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 400),
+    );
+  }
+
+  bool get isPanenVisible {
+    final AnimationStatus status = _panelController.status;
+    return status == AnimationStatus.completed ||
+        status == AnimationStatus.forward;
+  }
+
+  void _panelUp(SoundData data) {
+    if (isPanenVisible) return;
+    _panelController.forward();
+    setState(() => _currentSound = data);
+  }
+
+  void _panelDown() {
+    if (!isPanenVisible) return;
+    _panelController.reverse();
+  }
+
+  Widget _buildAnimatedPanel(BoxConstraints constraints) {
+    final height = constraints.biggest.height;
+    final panelHeight = height - _PANEL_HEADER_HEIGHT;
+    return AnimatedBuilder(
+      animation: _panelController,
+      child: SizedBox(
+        height: panelHeight,
+        child: Material(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          ),
+          color: Theme.of(context).backgroundColor,
+          child: Container(
+            margin: EdgeInsets.only(top: 16),
+            color: Theme.of(context).backgroundColor,
+            child: Stack(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment(0.0, 0.9),
+                  child: FloatingActionButton(
+                    onPressed: _panelDown,
+                    child: Icon(Icons.arrow_downward),
+                  ),
+                ),
+                Container(
+                  child: _currentSound != null
+                      ? SoundDetail(
+                          soundData: _currentSound,
+                        )
+                      : null,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      builder: (BuildContext context, Widget child) {
+        final value = Curves.easeInOutCubic.transform(_panelController.value);
+        final height = constraints.biggest.height;
+        return Transform.translate(
+          offset: Offset(0, height - panelHeight * value),
+          child: child,
+        );
+      },
+    );
+  }
+
+  Widget _buildButtons() {
     bool portrait = MediaQuery.of(context).orientation == Orientation.portrait;
     final int crossAxisCount = portrait ? 3 : 5;
-
     final AppData appData = Provider.of<AppData>(context);
     final List<SoundData> data = appData.data;
+
+    return data.length > 0
+        ? StaggeredGridView.countBuilder(
+            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            itemCount: data.length + 1,
+            crossAxisCount: crossAxisCount,
+            staggeredTileBuilder: (int index) => StaggeredTile.fit(
+              index < data.length ? 1 : crossAxisCount,
+            ),
+            itemBuilder: (BuildContext context, int index) =>
+                index < data.length
+                    ? Button(
+                        soundData: data[index],
+                        onLongPress: _panelUp,
+                      )
+                    : SizedBox(
+                        height: appData.adLoaded && !portrait ? 60.0 : 0.0,
+                      ),
+          )
+        : Center(
+            child: CircularProgressIndicator(),
+          );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       appBar: AppBar(
@@ -40,24 +143,20 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: data.length > 0
-          ? StaggeredGridView.countBuilder(
-              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              itemCount: data.length + 1,
-              crossAxisCount: crossAxisCount,
-              staggeredTileBuilder: (int index) => StaggeredTile.fit(
-                index < data.length ? 1 : crossAxisCount,
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Stack(
+            children: <Widget>[
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onHorizontalDragDown: (_) => _panelDown(),
+                child: _buildButtons(),
               ),
-              itemBuilder: (BuildContext context, int index) =>
-                  index < data.length
-                      ? Button(soundData: data[index])
-                      : SizedBox(
-                          height: appData.adLoaded && !portrait ? 60.0 : 0.0,
-                        ),
-            )
-          : Center(
-              child: CircularProgressIndicator(),
-            ),
+              _buildAnimatedPanel(constraints),
+            ],
+          );
+        },
+      ),
     );
   }
 }

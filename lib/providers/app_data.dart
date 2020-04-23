@@ -109,9 +109,8 @@ class AppData with ChangeNotifier {
 
       for (DocumentSnapshot doc in snap.documents) {
         _data.add(
-          SoundData(
-            name: doc.data["name"],
-            url: doc.data["url"],
+          SoundData.fromJson(
+            doc.data,
           ),
         );
       }
