@@ -50,7 +50,10 @@ class _HomePageState extends State<HomePage>
 
   Widget _buildAnimatedPanel(BoxConstraints constraints) {
     final height = constraints.biggest.height;
-    final panelHeight = height - _PANEL_HEADER_HEIGHT;
+    final bool portrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    final headerHeight = (portrait ? _PANEL_HEADER_HEIGHT : 0.0);
+    final panelHeight = height - headerHeight;
     return AnimatedBuilder(
       animation: _panelController,
       child: SizedBox(
@@ -67,7 +70,7 @@ class _HomePageState extends State<HomePage>
             child: Stack(
               children: <Widget>[
                 Align(
-                  alignment: Alignment(0.0, 0.9),
+                  alignment: Alignment(portrait ? 0.0 : 0.8, 0.9),
                   child: FloatingActionButton(
                     onPressed: _panelDown,
                     child: Icon(Icons.arrow_downward),
@@ -89,7 +92,7 @@ class _HomePageState extends State<HomePage>
         final value = Curves.easeInOutCubic.transform(_panelController.value);
         final startingOffset = height + _PANEL_CLOSED_PADDING;
         final valueMultiplier =
-            startingOffset - _PANEL_HEADER_HEIGHT - _PANEL_OPENED_PADDING;
+            startingOffset - headerHeight - _PANEL_OPENED_PADDING;
         return Transform.translate(
           offset: Offset(0, startingOffset - valueMultiplier * value),
           child: child,

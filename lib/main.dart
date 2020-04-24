@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
           canvasColor: Color(0xFF131313),
           accentColor: Color(0xFFF9013F),
-          backgroundColor: Color(0xFF202020),
+          backgroundColor: Color(0xFF212121),
+          cardColor: Color(0xFF303030),
           appBarTheme: AppBarTheme(
             color: Color(0xFFF9013F),
           ),
@@ -28,11 +29,19 @@ class MyApp extends StatelessWidget {
               fontSize: 22.0,
               fontWeight: FontWeight.w900,
             ),
+            headline: TextStyle(
+              fontSize: 42.0,
+              fontWeight: FontWeight.w200,
+            ),
             subtitle: TextStyle(
               color: Colors.white,
             ),
             body1: TextStyle(
               fontSize: 22.0,
+            ),
+            body2: TextStyle(
+              fontSize: 28.0,
+              fontWeight: FontWeight.w300,
             ),
           ),
         ),

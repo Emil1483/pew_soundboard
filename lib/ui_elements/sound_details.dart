@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+
 import '../helpers/sound_data.dart';
 
 class SoundDetail extends StatelessWidget {
@@ -8,22 +10,115 @@ class SoundDetail extends StatelessWidget {
     @required this.soundData,
   });
 
+  Widget _buildPersonCard(BuildContext context, {@required String name}) {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 12.0,
+          vertical: 8.0,
+        ),
+        margin: EdgeInsets.symmetric(
+          vertical: 4.0,
+          horizontal: 8.0,
+        ),
+        decoration: name == null
+            ? null
+            : BoxDecoration(
+                borderRadius: BorderRadius.circular(6.0),
+                color: Theme.of(context).cardColor,
+              ),
+        child: name == null
+            ? null
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.person),
+                  SizedBox(width: 6.0),
+                  Expanded(
+                    child: AutoSizeText(
+                      name,
+                      maxLines: 1,
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget _buildPersonCardRow(BuildContext context,
+      {@required List<String> names}) {
+    return Row(
+      children: names.map(
+        (String name) {
+          return _buildPersonCard(
+            context,
+            name: name,
+          );
+        },
+      ).toList(),
+    );
+  }
+
+  Widget _buildSuggestedBy(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Divider(),
+        Text(
+          "A sound suggested by:",
+          style: Theme.of(context).textTheme.body2,
+        ),
+        SizedBox(height: 12.0),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: _getSeperatedNames(context).map((List<String> names) {
+            return _buildPersonCardRow(
+              context,
+              names: names,
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  List<List<String>> _getSeperatedNames(BuildContext context) {
+    final bool portrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    List<List<String>> result = List<List<String>>();
+    final names = soundData.by;
+    final width = portrait ? 2 : 3;
+    for (int i = 0; i < names.length; i += width) {
+      final to = (i + width).clamp(0, names.length);
+      List<String> add = names.sublist(i, to);
+      add.addAll(
+        List.filled(width - add.length, null),
+      );
+      result.add(add);
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     TextTheme theme = Theme.of(context).textTheme;
-    return Align(
+    return Container(
       alignment: Alignment.topCenter,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            soundData.name,
-            style: theme.title,
-          ),
-          Column(
-            children: soundData.by.map((name) => Text(name)).toList(),
-          ),
-        ],
+      padding: EdgeInsets.symmetric(horizontal: 26.0),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            AutoSizeText(
+              soundData.name,
+              style: theme.headline,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+            ),
+            SizedBox(height: 16.0),
+            _buildSuggestedBy(context),
+          ],
+        ),
       ),
     );
   }

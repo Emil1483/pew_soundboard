@@ -64,6 +64,7 @@ class _SubmissionPopupState extends State<SubmissionPopup>
             child: TextField(
               textInputAction: TextInputAction.done,
               style: smallText,
+              maxLength: 18,
               controller: _creditController,
               decoration: InputDecoration(
                 labelText: "Name",
