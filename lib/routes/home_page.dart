@@ -132,22 +132,24 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    bool portrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       appBar: AppBar(
         title: Text("PewDiePie Soundboard"),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add_circle),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return SubmissionPopup();
-                },
-              );
-            },
-          ),
+          if (portrait)
+            IconButton(
+              icon: Icon(Icons.add_circle),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return SubmissionPopup();
+                  },
+                );
+              },
+            ),
         ],
       ),
       body: LayoutBuilder(

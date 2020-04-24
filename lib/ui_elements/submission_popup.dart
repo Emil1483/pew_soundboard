@@ -102,11 +102,22 @@ class _SubmissionPopupState extends State<SubmissionPopup>
     return 10 * math.sin(t * math.pi) * math.sin(t * math.pi * 3);
   }
 
+  void _popNextFrame() async {
+    await Future.delayed(Duration());
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     TextStyle smallText = Theme.of(context).textTheme.subtitle.copyWith(
           color: Colors.grey,
         );
+    final bool landscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    if (landscape) {
+      _popNextFrame();
+      return Container();
+    }
     return AnimatedBuilder(
       animation: _controller,
       child: AlertDialog(
