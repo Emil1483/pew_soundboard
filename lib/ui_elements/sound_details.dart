@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:provider/provider.dart';
 
 import '../helpers/sound_data.dart';
+import '../providers/app_data.dart';
 
 class SoundDetail extends StatelessWidget {
   final SoundData soundData;
@@ -61,9 +63,14 @@ class SoundDetail extends StatelessWidget {
   }
 
   Widget _buildSuggestedBy(BuildContext context) {
+    if (soundData.by.isEmpty) {
+      return Text(
+        "An original sound",
+        style: Theme.of(context).textTheme.body2,
+      );
+    }
     return Column(
       children: <Widget>[
-        Divider(),
         Text(
           "A sound suggested by:",
           style: Theme.of(context).textTheme.body2,
@@ -102,21 +109,46 @@ class SoundDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme theme = Theme.of(context).textTheme;
-    return Container(
-      alignment: Alignment.topCenter,
-      padding: EdgeInsets.symmetric(horizontal: 26.0),
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Container(
+        alignment: Alignment.topCenter,
+        padding: EdgeInsets.symmetric(horizontal: 26.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            AutoSizeText(
-              soundData.name,
-              style: theme.headline,
-              textAlign: TextAlign.center,
-              maxLines: 1,
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  constraints: BoxConstraints.loose(
+                    Size(
+                      MediaQuery.of(context).size.width - 122.0,
+                      double.infinity,
+                    ),
+                  ),
+                  child: AutoSizeText(
+                    soundData.name,
+                    style: theme.headline,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                  ),
+                ),
+                SizedBox(width: 16.0),
+                IconButton(
+                  icon: Icon(Icons.share),
+                  onPressed: () {
+                    final AppData appData =
+                        Provider.of<AppData>(context, listen: false);
+                    appData.shareEvent(soundData);
+                  },
+                ),
+              ],
             ),
             SizedBox(height: 16.0),
+            Divider(),
             _buildSuggestedBy(context),
+            SizedBox(height: 76.0),
           ],
         ),
       ),

@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  static const _PANEL_HEADER_HEIGHT = 96.0;
+  static const _PANEL_HEADER_HEIGHT = 256.0;
   static const _PANEL_OPENED_PADDING = 2.0;
   static const _PANEL_CLOSED_PADDING = 62.0;
 
@@ -58,30 +58,29 @@ class _HomePageState extends State<HomePage>
       animation: _panelController,
       child: SizedBox(
         height: panelHeight,
-        child: Material(
-          borderRadius: const BorderRadius.only(
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16.0),
             topRight: Radius.circular(16.0),
           ),
-          color: Theme.of(context).backgroundColor,
           child: Container(
-            margin: EdgeInsets.only(top: 16),
             color: Theme.of(context).backgroundColor,
             child: Stack(
               children: <Widget>[
+                Material(
+                  color: Theme.of(context).backgroundColor,
+                  child: _currentSound != null
+                      ? SoundDetail(
+                          soundData: _currentSound,
+                        )
+                      : null,
+                ),
                 Align(
                   alignment: Alignment(portrait ? 0.0 : 0.8, 0.9),
                   child: FloatingActionButton(
                     onPressed: _panelDown,
                     child: Icon(Icons.arrow_downward),
                   ),
-                ),
-                Container(
-                  child: _currentSound != null
-                      ? SoundDetail(
-                          soundData: _currentSound,
-                        )
-                      : null,
                 ),
               ],
             ),
@@ -91,8 +90,9 @@ class _HomePageState extends State<HomePage>
       builder: (BuildContext context, Widget child) {
         final value = Curves.easeInOutCubic.transform(_panelController.value);
         final startingOffset = height + _PANEL_CLOSED_PADDING;
+        final openPadding = portrait ? _PANEL_OPENED_PADDING : 0.0;
         final valueMultiplier =
-            startingOffset - headerHeight - _PANEL_OPENED_PADDING;
+            startingOffset - headerHeight - openPadding;
         return Transform.translate(
           offset: Offset(0, startingOffset - valueMultiplier * value),
           child: child,

@@ -49,7 +49,7 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
 
       appData.onPlayingSound.listen((String url) {
         if (url == widget.soundData.url) return;
-        setState(() => _tapped = false);
+        if (mounted) setState(() => _tapped = false);
       });
 
       appData.player.onDurationChanged.listen((Duration time) {
@@ -78,11 +78,6 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
     _controller.forward();
   }
 
-  Future<void> _share() async {
-    final AppData appData = Provider.of<AppData>(context, listen: false);
-    appData.shareEvent(widget.soundData);
-  }
-
   @override
   Widget build(BuildContext context) {
     return ScaleTransition(
@@ -97,13 +92,10 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
         onTapCancel: () => _pressController.value = 0,
         onLongPress: () async {
           Feedback.forLongPress(context);
-          //await _share();
           widget.onLongPress(widget.soundData);
         },
         onTap: () async {
           _currentDuration = null;
-
-          // ↓↓↓
 
           final AppData appData = Provider.of<AppData>(context, listen: false);
 
@@ -114,10 +106,8 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
           await player.stop();
           await player.play(widget.soundData.url);
 
-          // ↑↑↑
-          // TODO: refactor this into appData.play(widget.soundData.url)
 
-          setState(() => _tapped = true);
+          if (mounted) setState(() => _tapped = true);
         },
         child: Container(
           margin: EdgeInsets.all(2.0),
