@@ -16,6 +16,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   static const _PANEL_HEADER_HEIGHT = 96.0;
+  static const _PANEL_OPENED_PADDING = 2.0;
+  static const _PANEL_CLOSED_PADDING = 62.0;
 
   AnimationController _panelController;
   SoundData _currentSound;
@@ -85,9 +87,11 @@ class _HomePageState extends State<HomePage>
       ),
       builder: (BuildContext context, Widget child) {
         final value = Curves.easeInOutCubic.transform(_panelController.value);
-        final height = constraints.biggest.height;
+        final startingOffset = height + _PANEL_CLOSED_PADDING;
+        final valueMultiplier =
+            startingOffset - _PANEL_HEADER_HEIGHT - _PANEL_OPENED_PADDING;
         return Transform.translate(
-          offset: Offset(0, height - panelHeight * value),
+          offset: Offset(0, startingOffset - valueMultiplier * value),
           child: child,
         );
       },
